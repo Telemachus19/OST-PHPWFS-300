@@ -1,65 +1,69 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
-    Log::info('Welcome page visited');
     return view('welcome');
 });
 
-Route::get('/info', function () {
-    Log::info('Phpinfo page visited');
-    return phpinfo();
+function getPosts() {
+    return json_decode(file_get_contents(database_path('posts.json')), true);
+}
+
+function savePosts($posts) {
+    file_put_contents(database_path('posts.json'), json_encode($posts, JSON_PRETTY_PRINT));
+}
+
+// show all posts
+Route::get('/posts', function(){
+    $posts = getPosts();
+    return view('indexPosts', ['posts'=>$posts]);
 });
 
-Route::get('/health', function () {
-    $status = [];
+// go to create post form
+Route::get('/posts/create', function(){
+    return view('createPosts');
+});
 
-    // Check Database Connection
-    try {
-        DB::connection()->getPdo();
-        // Optionally, run a simple query
-        DB::select('SELECT 1');
-        $status['database'] = 'OK';
-    } catch (\Exception $e) {
-        $status['database'] = 'Error';
-    }
+// save new post entered in form
+Route::post('/posts', function(Request $request){
+    $posts = getPosts();
+    $posts[] = [
+        'title' => $request->title,
+        'content' => $request->content
+    ];
+    savePosts($posts);
+    return redirect('/posts');
+});
 
-    // Check Redis Connection
-    try {
-        Cache::store('redis')->put('health_check', 'OK', 10);
-        $value = Cache::store('redis')->get('health_check');
-        if ($value === 'OK') {
-            $status['redis'] = 'OK';
-        } else {
-            $status['redis'] = 'Error';
-        }
-    } catch (\Exception $e) {
-        $status['redis'] = 'Error';
-    }
+// show one post
+Route::get('/posts/{post}', function($post){
+    $posts = getPosts();
+    return view('showPosts', ['posts'=>$posts, 'post'=>$post - 1]);
+});
 
-    // Check Storage Access
-    try {
-        $testFile = 'health_check.txt';
-        Storage::put($testFile, 'OK');
-        $content = Storage::get($testFile);
-        Storage::delete($testFile);
+// go to edit form
+Route::get('/posts/{post}/edit', function($post){
+    $posts = getPosts();
+    return view('editPosts', ['post' => $posts[$post - 1], 'id' => $post]);
+});
 
-        if ($content === 'OK') {
-            $status['storage'] = 'OK';
-        } else {
-            $status['storage'] = 'Error';
-        }
-    } catch (\Exception $e) {
-        $status['storage'] = 'Error';
-    }
+// save edit
+Route::put('/posts/{post}', function(Request $request, $post){
+    $posts = getPosts();
+    $posts[$post - 1] = [
+        'title' => $request->title,
+        'content' => $request->content
+    ];
+    savePosts($posts);
+    return redirect('/posts');
+});
 
-    // Determine overall health status
-    $isHealthy = collect($status)->every(function ($value) {
-        return $value === 'OK';
-    });
-
-    $httpStatus = $isHealthy ? 200 : 503;
-
-    return response()->json($status, $httpStatus);
+// delete
+Route::delete('/posts/{post}', function($post){
+    $posts = getPosts();
+    array_splice($posts, $post - 1, 1);
+    savePosts($posts);
+    return redirect('/posts');
 });
