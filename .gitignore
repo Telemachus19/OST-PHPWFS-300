@@ -1,0 +1,125 @@
+# Laravel Framework
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/bootstrap/cache
+/bootstrap/cache/*
+!storage/.gitkeep
+!bootstrap/cache/.gitkeep
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# IDE & Editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Operating System
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# Docker Setup & Local Development
+setup.sh
+setup.bat
+docker-compose.override.yml
+Makefile
+
+# PHP & Composer
+composer.lock
+.phpunit.result.cache
+.php-cs-fixer.cache
+.phpstan.baseline.json
+
+# Testing
+/coverage
+.phpunit.cache
+
+# Logs
+storage/logs/*
+!storage/logs/.gitkeep
+*.log
+
+# Temporary Files
+*.tmp
+*.temp
+*.cache
+
+# Node/NPM
+npm-debug.log
+npm-debug.log.*
+yarn-error.log
+yarn-debug.log
+.npm
+.yarn
+
+# Webpack/Build
+/dist
+/build
+mix-manifest.json
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+database.sqlite
+database.sqlite3
+
+# API Documentation
+/docs
+/documentation
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# IDE-specific
+*.sublime-workspace
+.editorconfig
+.prettierrc
+.prettierignore
+jsconfig.json
+
+# MacOS
+.AppleDouble
+.LSOverride
+*.app
+
+# Windows
+*.exe
+Thumbs.db
+Desktop.ini
+
+# Local development files
+.env.testing
+.env.*.testing
+local.env
+dev.env
+
+# Miscellaneous
+.renv
+.venv
+env/
+venv/
+.cache
+.tmp
+.idea/
+.vscode/
+README_*
