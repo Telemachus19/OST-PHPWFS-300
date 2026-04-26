@@ -1,40 +1,47 @@
-.git
-.gitignore
-.gitattributes
-.github
+# Include any files or directories that you don't want to be copied to your
+# container here (e.g., local build artifacts, temporary files, etc.).
+#
+# For more help, visit the .dockerignore file reference guide at
+# https://docs.docker.com/go/build-context-dockerignore/
+
+**/.classpath
+**/.dockerignore
+**/.env
+**/.git
+**/.gitignore
+**/.gitattributes
+**/.project
+**/.settings
+**/.toolstarget
+**/.vs
+**/.vscode
+**/.next
+**/.cache
+**/*.*proj.user
+**/*.dbmdl
+**/*.jfm
+**/charts
+**/docker-compose*
+**/compose.y*ml
+**/compose.*.y*ml
+!**/composer.json
+!**/composer.lock
+**/Dockerfile*
+**/node_modules
+**/npm-debug.log
+**/obj
+**/secrets.dev.yaml
+**/values.dev.yaml
+**/vendor
+**/.DS_Store
 .editorconfig
-.env
-.env.local
-.env.*.local
-node_modules
-npm-debug.log
-yarn-error.log
-vendor
-.DS_Store
-Thumbs.db
-.vscode
-.idea
-*.log
-*.swp
-*.swo
-*~
-.cache
-.phpunit.result.cache
-__pycache__
-.pytest_cache
-.vagrant
-Dockerfile
-docker-compose.yml
-docker-compose.*.yml
-.docker/
-.dockerignore
+.env.example
+LICENSE
+README.md
+
+# Ignore development-related files and directories
+# For development environment, we will use mount bind to mount the source code to the container
+# So we don't need to copy the source code to the container for development
 tests/
-phpstan.neon
-phpstan.baseline.json
-psalm.xml
-.deptrac.yaml
-.php-cs-fixer.cache
-storage/logs/*
-!storage/logs/.gitkeep
-bootstrap/cache/*
-!bootstrap/cache/.gitkeep
+phpunit.xml
+phpunit.xml.dist
