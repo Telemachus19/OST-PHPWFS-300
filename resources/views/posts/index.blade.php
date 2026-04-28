@@ -47,6 +47,9 @@
                         </article>
                     @endforeach
                 </div>
+                <div class="mt-8">
+                    <x-pagination.xy :paginator="$posts" />
+                </div>
             @endif
         </main>
     </div>
