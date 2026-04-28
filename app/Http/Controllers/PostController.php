@@ -13,8 +13,9 @@ class PostController extends Controller
     public function index(): View
     {
         $posts = Post::latest()->paginate(6);
+        $trashedPosts = Post::onlyTrashed()->latest('deleted_at')->get();
 
-        return view('posts.index', compact('posts'));
+        return view('posts.index', compact('posts', 'trashedPosts'));
     }
 
     public function create(): View
@@ -75,5 +76,15 @@ class PostController extends Controller
         return redirect()
             ->route('posts.index')
             ->with('success', 'Post deleted successfully.');
+    }
+
+    public function restore(string $postId): RedirectResponse
+    {
+        $post = Post::onlyTrashed()->findOrFail($postId);
+        $post->restore();
+
+        return redirect()
+            ->route('posts.index')
+            ->with('success', 'Post restored successfully.');
     }
 }

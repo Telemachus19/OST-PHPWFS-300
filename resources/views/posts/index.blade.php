@@ -50,6 +50,29 @@
                 <div class="mt-8">
                     <x-pagination.xy :paginator="$posts" />
                 </div>
+
+                @if ($trashedPosts->isNotEmpty())
+                    <section class="mt-10 rounded-2xl border border-amber-200 bg-amber-50/80 p-6 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h2 class="text-lg font-semibold text-amber-900">Recently Deleted</h2>
+                            <p class="text-xs font-medium uppercase tracking-widest text-amber-700">Restore posts</p>
+                        </div>
+
+                        <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                            @foreach ($trashedPosts as $trashedPost)
+                                <article class="rounded-xl border border-amber-200 bg-white p-4 shadow-sm">
+                                    <h3 class="text-base font-semibold text-slate-900">{{ $trashedPost->title }}</h3>
+                                    <p class="mt-2 text-xs uppercase tracking-wider text-amber-700">Deleted {{ $trashedPost->deleted_at?->format('M d, Y') }}</p>
+                                    <form action="{{ route('posts.restore', $trashedPost->id) }}" method="POST" class="mt-4">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="inline-flex items-center rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-amber-700">Restore</button>
+                                    </form>
+                                </article>
+                            @endforeach
+                        </div>
+                    </section>
+                @endif
             @endif
         </main>
     </div>
