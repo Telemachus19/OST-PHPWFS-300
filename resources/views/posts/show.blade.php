@@ -20,7 +20,8 @@
             <header class="border-b border-slate-100 px-6 py-5">
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Post Details</p>
                 <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">{{ $post->title }}</h1>
-                <p class="mt-2 text-sm text-slate-500">Published {{ $post->created_at->format('M d, Y \a\t h:i A') }}</p>
+                <p class="mt-2 text-sm text-slate-500">Published {{ $post->created_at->format('l jS \o\f F \a\t h:i A') }}</p>
+                <p class="mt-1 text-sm text-slate-500">Author {{ $post->user?->name ?? 'Unknown' }} ({{ $post->user?->email ?? 'No email' }})</p>
             </header>
 
             <div class="px-6 py-6">
