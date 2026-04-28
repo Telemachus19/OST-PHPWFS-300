@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -18,12 +19,15 @@ class PostController extends Controller
 
     public function create(): View
     {
-        return view('posts.create');
+        $users = User::orderBy('name')->get();
+
+        return view('posts.create', compact('users'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
         ]);
@@ -42,12 +46,15 @@ class PostController extends Controller
 
     public function edit(Post $post): View
     {
-        return view('posts.edit', compact('post'));
+        $users = User::orderBy('name')->get();
+
+        return view('posts.edit', compact('post', 'users'));
     }
 
     public function update(Request $request, Post $post): RedirectResponse
     {
         $validated = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
         ]);

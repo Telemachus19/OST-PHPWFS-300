@@ -44,6 +44,23 @@
                     </div>
 
                     <div>
+                        <label for="user_id" class="mb-2 block text-sm font-medium text-slate-700">Author</label>
+                        <select
+                            id="user_id"
+                            name="user_id"
+                            class="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                            required
+                        >
+                            <option value="" disabled {{ old('user_id') ? '' : 'selected' }}>Select a user</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}" {{ (string) old('user_id') === (string) $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ $user->email }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
                         <label for="content" class="mb-2 block text-sm font-medium text-slate-700">Content</label>
                         <textarea
                             id="content"
