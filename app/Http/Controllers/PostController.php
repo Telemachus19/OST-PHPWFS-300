@@ -6,23 +6,30 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PostController extends Controller
 {
-    public function index(): View
+    public function index(): Response
     {
-        $posts = Post::latest()->paginate(6);
-        $trashedPosts = Post::onlyTrashed()->latest('deleted_at')->get();
+        $posts = Post::with('user')->latest()->paginate(6);
+        $trashedPosts = Post::onlyTrashed()->with('user')->latest('deleted_at')->get();
 
-        return view('posts.index', compact('posts', 'trashedPosts'));
+        return Inertia::render('Posts/Index', [
+            'posts' => $posts,
+            'trashedPosts' => $trashedPosts,
+        ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
         $users = User::orderBy('name')->get();
 
-        return view('posts.create', compact('users'));
+        return Inertia::render('Posts/Create', [
+            'users' => $users,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -31,7 +38,12 @@ class PostController extends Controller
             'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('posts', 'public');
+        }
 
         $post = Post::create($validated);
 
@@ -40,18 +52,23 @@ class PostController extends Controller
             ->with('success', 'Post created successfully.');
     }
 
-    public function show(Post $post): View
+    public function show(Post $post): Response
     {
         $post->load('user');
 
-        return view('posts.show', compact('post'));
+        return Inertia::render('Posts/Show', [
+            'post' => $post,
+        ]);
     }
 
-    public function edit(Post $post): View
+    public function edit(Post $post): Response
     {
         $users = User::orderBy('name')->get();
 
-        return view('posts.edit', compact('post', 'users'));
+        return Inertia::render('Posts/Edit', [
+            'post' => $post,
+            'users' => $users,
+        ]);
     }
 
     public function update(Request $request, Post $post): RedirectResponse
@@ -60,7 +77,15 @@ class PostController extends Controller
             'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        if ($request->hasFile('image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $validated['image'] = $request->file('image')->store('posts', 'public');
+        }
 
         $post->update($validated);
 
@@ -75,7 +100,22 @@ class PostController extends Controller
 
         return redirect()
             ->route('posts.index')
-            ->with('success', 'Post deleted successfully.');
+            ->with('success', 'Post moved to trash successfully.');
+    }
+
+    public function forceDelete(string $postId): RedirectResponse
+    {
+        $post = Post::withTrashed()->findOrFail($postId);
+
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
+        }
+
+        $post->forceDelete();
+
+        return redirect()
+            ->route('posts.index')
+            ->with('success', 'Post deleted permanently.');
     }
 
     public function restore(string $postId): RedirectResponse
