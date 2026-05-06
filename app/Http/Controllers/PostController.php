@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -25,21 +24,18 @@ class PostController extends Controller
 
     public function create(): Response
     {
-        $users = User::orderBy('name')->get();
-
-        return Inertia::render('Posts/Create', [
-            'users' => $users,
-        ]);
+        return Inertia::render('Posts/Create');
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
         ]);
+
+        $validated['user_id'] = $request->user()->id;
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('posts', 'public');
@@ -63,18 +59,14 @@ class PostController extends Controller
 
     public function edit(Post $post): Response
     {
-        $users = User::orderBy('name')->get();
-
         return Inertia::render('Posts/Edit', [
             'post' => $post,
-            'users' => $users,
         ]);
     }
 
     public function update(Request $request, Post $post): RedirectResponse
     {
         $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
             'title' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
