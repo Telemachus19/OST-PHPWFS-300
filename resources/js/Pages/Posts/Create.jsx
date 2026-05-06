@@ -5,9 +5,8 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, useForm } from '@inertiajs/react';
 
-export default function Create({ auth, users }) {
+export default function Create({ auth }) {
     const { data, setData, post, processing, errors } = useForm({
-        user_id: '',
         title: '',
         content: '',
         image: null,
@@ -33,25 +32,6 @@ export default function Create({ auth, users }) {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6">
                             <form onSubmit={submit} className="space-y-6">
-                                <div>
-                                    <InputLabel htmlFor="user_id" value="Author" />
-                                    <select
-                                        id="user_id"
-                                        className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
-                                        value={data.user_id}
-                                        onChange={(e) => setData('user_id', e.target.value)}
-                                        required
-                                    >
-                                        <option value="">Select an author</option>
-                                        {users.map((user) => (
-                                            <option key={user.id} value={user.id}>
-                                                {user.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <InputError message={errors.user_id} className="mt-2" />
-                                </div>
-
                                 <div>
                                     <InputLabel htmlFor="title" value="Title" />
                                     <TextInput

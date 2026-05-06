@@ -15,7 +15,17 @@ export default function Index({ auth, posts, trashedPosts }) {
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="mb-6 flex justify-between items-center">
-                        <h3 className="text-lg font-medium text-gray-900">All Posts</h3>
+                        <div className="flex items-center gap-4">
+                            <h3 className="text-lg font-medium text-gray-900">All Posts</h3>
+                            <Link
+                                href={route('logout')}
+                                method="post"
+                                as="button"
+                                className="text-sm font-medium text-gray-500 hover:text-gray-700"
+                            >
+                                Log Out
+                            </Link>
+                        </div>
                         <Link
                             href={route('posts.create')}
                             className="rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 transition duration-150 ease-in-out"
@@ -36,6 +46,7 @@ export default function Index({ auth, posts, trashedPosts }) {
                                 )}
                                 <div className="p-6 flex-grow flex flex-col">
                                     <h3 className="text-lg font-bold text-gray-900">{post.title}</h3>
+                                    <p className="text-xs text-gray-400 font-mono">slug: {post.slug}</p>
                                     <p className="mt-1 text-sm text-gray-500">
                                         By <span className="font-semibold text-indigo-600">{post.user.name}</span>
                                     </p>
@@ -82,7 +93,7 @@ export default function Index({ auth, posts, trashedPosts }) {
                                 link.url ? (
                                     <Link
                                         key={i}
-                                        href={link.url}
+                                        href={link.url.replace(/^(?:\/\/|[^\/]+)*\//, '/')}
                                         className={`px-3 py-1 rounded ${link.active ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border hover:bg-gray-50'}`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
@@ -106,6 +117,7 @@ export default function Index({ auth, posts, trashedPosts }) {
                                     <thead className="bg-gray-50">
                                         <tr>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deleted At</th>
                                             <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -115,6 +127,7 @@ export default function Index({ auth, posts, trashedPosts }) {
                                         {trashedPosts.map((post) => (
                                             <tr key={post.id}>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{post.title}</td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{post.slug}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.user.name}</td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {new Date(post.deleted_at).toLocaleString()}

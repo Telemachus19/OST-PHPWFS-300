@@ -15,12 +15,23 @@
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight text-slate-900">All Posts</h1>
                 </div>
-                <a
-                    href="{{ route('posts.create') }}"
-                    class="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
-                >
-                    Create Post
-                </a>
+                <div class="flex items-center gap-4">
+                    @auth
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="text-sm font-semibold text-slate-600 hover:text-slate-900">Log Out</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="text-sm font-semibold text-slate-600 hover:text-slate-900">Log in</a>
+                        <a href="{{ route('register') }}" class="text-sm font-semibold text-slate-600 hover:text-slate-900">Register</a>
+                    @endauth
+                    <a
+                        href="{{ route('posts.create') }}"
+                        class="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-700"
+                    >
+                        Create Post
+                    </a>
+                </div>
             </div>
 
             @if (session('success'))
@@ -39,6 +50,7 @@
                     @foreach ($posts as $post)
                         <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
                             <h2 class="line-clamp-2 text-xl font-semibold text-slate-900">{{ $post->title }}</h2>
+                            <p class="mt-1 text-xs text-slate-500 font-mono">Slug: {{ $post->slug }}</p>
                             <p class="mt-3 line-clamp-3 text-sm text-slate-600">{{ $post->content }}</p>
                             <div class="mt-5 flex items-center justify-between">
                                 <p class="text-xs font-medium uppercase tracking-wider text-slate-400">{{ $post->created_at->format('M d, Y') }}</p>
